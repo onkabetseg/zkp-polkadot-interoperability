@@ -3,6 +3,19 @@
 
 Prototype for a **Zero-Knowledge Proof (ZKP) based solution** to enhance secure and scalable blockchain interoperability in the **Polkadot** ecosystem.
 
+## Project Goal
+
+This repository builds a **Polkadot-style interoperability prototype** where:
+
+- Zero-knowledge proofs are generated off-chain using **Circom** and **Groth16 zk-SNARKs**.
+- Proofs are verified **on-chain** inside a custom **Substrate verifier pallet**.
+- The verifier is wired into **cross-chain message flows**, so a destination chain only accepts a message if the attached proof is valid.
+- On a Rococo-style test setup, the target is:
+  - Proof verification in **under ~100 ms**, and  
+  - **Small proof size**, so messages stay light and cheap.
+- This reduces reliance on **trusted relayers** and moves trust back into cryptography and the chain itself.
+
+
 ## 📦 Project Overview
 
 Most blockchains struggle to communicate securely due to privacy risks, weak trust models, and lack of common technical standards. This project explores how **Zero-Knowledge Proofs (ZKPs)** can help solve these problems by allowing blockchains to verify information without revealing sensitive data.
