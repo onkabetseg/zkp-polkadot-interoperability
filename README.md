@@ -3,6 +3,9 @@
 
 Prototype for a **Zero-Knowledge Proof (ZKP) based solution** to enhance secure and scalable blockchain interoperability in the **Polkadot** ecosystem.
 
+##  > Circom + Groth16 zk-SNARKs verified inside a Substrate pallet, powering trust-minimised cross-chain flows in the Polkadot ecosystem.
+
+
 ## Project Goal
 
 This repository builds a **Polkadot-style interoperability prototype** where:
@@ -84,6 +87,19 @@ zkp-polkadot-interoperability/
      - verification time (< ~100 ms)
      - proof size
      - overall transaction cost and throughput.
+    
+#### Roadmap
+
+- [x] Project skeleton and folder structure
+- [ ] Substrate node with basic interoperability + verifier pallets
+- [ ] Circom circuits for cross-chain state / message validity
+- [ ] Groth16 proving pipeline (key setup, proof generation, JSON export)
+- [ ] Integration of the Groth16 verifier into the Substrate runtime
+- [ ] Wire verifier pallet into cross-chain message flow (XCM / custom messages)
+- [ ] Rococo-style testnet setup and benchmarks
+      - Measure verification time, proof size, and fee impact
+- [ ] Documentation and diagrams in `docs/` (architecture, flows, benchmarks)
+
 ## 📄 License
 
 This project is for academic research and follows an open-source license (to be confirmed).
