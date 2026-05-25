@@ -1,105 +1,182 @@
+# ZKP Polkadot Interoperability
 
-# ZKP-Polkadot-Interoperability
+A research prototype for **privacy-preserving cross-chain verification** using **Zero-Knowledge Proofs (ZKPs)** in **Polkadot/Substrate environments**.
 
-Prototype for a **Zero-Knowledge Proof (ZKP) based solution** to enhance secure and scalable blockchain interoperability in the **Polkadot** ecosystem.
+This project supports the paper:
 
-##  > Circom + Groth16 zk-SNARKs verified inside a Substrate pallet, powering trust-minimised cross-chain flows in the Polkadot ecosystem.
+> **A Framework for Privacy-Preserving Cross-Chain Verification Using Zero-Knowledge Proofs in Polkadot/Substrate Environments**
 
+## Overview
+
+Blockchain interoperability allows different chains to exchange messages, assets, and transaction information. However, cross-chain verification can expose sensitive information such as balances, transfer amounts, identities, or business transaction details.
+
+This project explores how **Zero-Knowledge Proofs** can be used to verify cross-chain transaction validity without revealing private data. The proposed framework combines:
+
+- **Circom** for ZKP circuit design
+- **SnarkJS** for Groth16 proof generation
+- **Substrate FRAME pallet** for on-chain proof verification
+- **Polkadot/XCM-style messaging** for future cross-chain communication between parachains
+
+The main idea is simple: private data stays off-chain, while only the proof and public signals are submitted on-chain for verification.
 
 ## Project Goal
 
-This repository builds a **Polkadot-style interoperability prototype** where:
+The goal is to design and prototype a Polkadot/Substrate-based framework where:
 
-- Zero-knowledge proofs are generated off-chain using **Circom** and **Groth16 zk-SNARKs**.
-- Proofs are verified **on-chain** inside a custom **Substrate verifier pallet**.
-- The verifier is wired into **cross-chain message flows**, so a destination chain only accepts a message if the attached proof is valid.
-- On a Rococo-style test setup, the target is:
-  - Proof verification in **under ~100 ms**, and  
-  - **Small proof size**, so messages stay light and cheap.
-- This reduces reliance on **trusted relayers** and moves trust back into cryptography and the chain itself.
+1. Private transaction data is processed off-chain.
+2. A Groth16 zk-SNARK proof is generated using Circom and SnarkJS.
+3. The proof is submitted to a custom Substrate verifier pallet.
+4. The pallet verifies the proof on-chain.
+5. A valid proof can support future XCM-based cross-chain actions.
 
+This reduces the need to expose private transaction data during cross-chain verification.
 
-## 📦 Project Overview
+## Key Features
 
-Most blockchains struggle to communicate securely due to privacy risks, weak trust models, and lack of common technical standards. This project explores how **Zero-Knowledge Proofs (ZKPs)** can help solve these problems by allowing blockchains to verify information without revealing sensitive data.
+- Privacy-preserving cross-chain transaction verification
+- Off-chain proof generation using Circom and SnarkJS
+- On-chain proof checking using a Substrate FRAME verifier pallet
+- Separation of private computation and public blockchain verification
+- XCM-ready design for future parachain interoperability
+- Synthetic financial transaction data for safe testing
 
-The prototype focuses on building and testing a ZKP-based model to improve secure cross-chain communication within Polkadot.
+## High-Level Workflow
 
-## ⚙️ Key Features
+1. **Source-chain event**
+   - A transaction or state update happens on the source chain.
 
-- ZKP-based verification for cross-chain message passing  
-- Secure and privacy-preserving transaction validation  
-- Prototype implemented using Substrate, Circom or ZoKrates  
-- Simulated test environment for performance and security testing  
+2. **Private proof generation**
+   - Private data such as balances, transfer amounts, or nullifiers stays off-chain.
+   - Circom and SnarkJS generate a Groth16 proof.
 
-## 🛠️ Project Structure
+3. **Proof submission**
+   - The proof and public inputs are submitted to a Substrate verifier pallet.
 
-```
+4. **On-chain verification**
+   - The verifier pallet checks the proof against the stored verification key.
+   - If valid, the pallet emits a successful verification event.
+
+5. **Cross-chain action**
+   - A verified result can be used to support an XCM-linked action between parachains.
+
+## Project Structure
+
+```text
 zkp-polkadot-interoperability/
-├── substrate-node/          # Substrate-based blockchain setup
-├── zkp-circuits/            # ZKP circuits and proof-related files
-├── scripts/                 # Helper scripts for deployment and testing
-├── testnet-simulation/      # Local test environment setup
-├── docs/                    # Design documents, diagrams
-├── results/                 # Test results and performance benchmarks
+├── substrate-node/          # Substrate node and runtime setup
+├── zkp-circuits/            # Circom circuits and ZKP artifacts
+├── scripts/                 # Build, proof generation, and test scripts
+├── testnet-simulation/      # Local testnet or Rococo-style simulation setup
+├── docs/                    # Architecture diagrams and design notes
+├── results/                 # Benchmark results and evaluation outputs
+└── README.md                # Project documentation
 ```
 
-## 🚀 Getting Started
+## Main Components
 
-1. Clone the repository:  
-   `git clone https://github.com/onkabetseg/zkp-polkadot-interoperability.git`
+| Component | Purpose |
+|---|---|
+| Private input data | Sensitive transaction details kept off-chain |
+| Circom circuit | Defines the rule that must be proven |
+| Witness generator | Builds witness values from private and public inputs |
+| Trusted setup | Produces proving and verification keys for Groth16 |
+| SnarkJS prover | Generates the zk-SNARK proof off-chain |
+| Off-chain converter | Formats proof data for Substrate submission |
+| Verifier pallet | Verifies the proof on-chain and emits result events |
+| XCM layer | Supports future cross-chain actions after verification |
 
-2. Set up development tools:  
-   - [Substrate](https://docs.substrate.io/)  
-   - [Circom](https://docs.circom.io/) or [ZoKrates](https://zokrates.github.io/)  
+## Suggested Software Stack
 
-3. Follow setup instructions in relevant folders (coming soon).  
+| Software | Purpose |
+|---|---|
+| Rust | Runtime and pallet development |
+| Polkadot SDK / Substrate | Blockchain runtime and node framework |
+| Circom | ZKP circuit design and compilation |
+| SnarkJS | Groth16 proof generation and local verification |
+| Node.js and npm | Script execution and JavaScript dependency management |
 
-## 📚 Project Status
+## Getting Started
 
-- Project initialization complete  
-- Folder structure prepared  
-- Development of ZKP circuits and Substrate modules in progress  
+### 1. Clone the repository
 
-## High-Level Flow
+```bash
+git clone https://github.com/onkabetseg/zkp-polkadot-interoperability.git
+cd zkp-polkadot-interoperability
+```
 
-3.1. **Event on Source Chain**
-   - A transaction happens on Chain A (for example, a balance lock or state update).
+### 2. Install required tools
 
-3.2. **Proof Generation (off-chain)**
-   - A relayer or off-chain worker collects required data from Chain A.
-   - It runs a **Circom circuit** and uses **Groth16** to generate:
-     - a proof `π`
-     - public inputs (e.g., state root, account, amount)
+Install the following tools before running the prototype:
 
-3.3. **Cross-Chain Message**
-   - The relayer sends a message to Chain B containing:
-     - the public inputs, and
-     - the proof `π`.
+- Rust and Cargo
+- Polkadot SDK / Substrate dependencies
+- Node.js and npm
+- Circom
+- SnarkJS
 
-3.4. **On-Chain Verification (Substrate pallet)**
-   - Chain B calls the **zk-SNARK verifier pallet**.
-   - The pallet checks `verify(π, public_inputs)` using the on-chain verification key.
-   - If the proof is valid, the cross-chain action continues (e.g., mint, unlock, or update).
+### 3. Build ZKP circuits
 
-3.5. **Rococo-style Testing**
-   - We run this flow on a local or Rococo-like testnet and record:
-     - verification time (< ~100 ms)
-     - proof size
-     - overall transaction cost and throughput.
-    
-#### Roadmap
+Circuit files will be placed under:
 
-- [x] Project skeleton and folder structure
-- [ ] Substrate node with basic interoperability + verifier pallets
-- [ ] Circom circuits for cross-chain state / message validity
-- [ ] Groth16 proving pipeline (key setup, proof generation, JSON export)
-- [ ] Integration of the Groth16 verifier into the Substrate runtime
-- [ ] Wire verifier pallet into cross-chain message flow (XCM / custom messages)
-- [ ] Rococo-style testnet setup and benchmarks
-      - Measure verification time, proof size, and fee impact
-- [ ] Documentation and diagrams in `docs/` (architecture, flows, benchmarks)
+```text
+zkp-circuits/
+```
 
-## 📄 License
+The expected flow is:
 
-This project is for academic research and follows an open-source license (to be confirmed).
+```bash
+circom circuit.circom --r1cs --wasm --sym
+snarkjs groth16 setup circuit.r1cs pot.ptau circuit_0000.zkey
+snarkjs groth16 prove circuit_final.zkey witness.wtns proof.json public.json
+snarkjs groth16 verify verification_key.json public.json proof.json
+```
+
+### 4. Submit proof to Substrate
+
+After proof generation, an off-chain converter will format the proof for the verifier pallet. The pallet will verify the proof and emit either a success or rejection event.
+
+## Research Evaluation
+
+The framework will be evaluated using:
+
+- Proof generation time
+- Local verification time
+- On-chain verification feasibility
+- Proof size
+- Transaction inclusion latency
+- XCM-linked workflow feasibility
+- Valid proof acceptance
+- Invalid or tampered proof rejection
+
+The current paper uses analytical feasibility assessment based on published benchmarks and Polkadot cross-chain latency studies. Prototype testing and full implementation results will be added after development and evaluation.
+
+## Current Status
+
+- [x] Repository structure created
+- [x] Research framework defined
+- [x] Paper draft prepared
+- [ ] Circom circuits implementation
+- [ ] Groth16 proof generation pipeline
+- [ ] Substrate verifier pallet implementation
+- [ ] Proof converter for Substrate submission
+- [ ] XCM/custom message integration
+- [ ] Testnet simulation and benchmarking
+- [ ] Results documentation
+
+## Roadmap
+
+1. Implement simple balance-check and commitment-check circuits.
+2. Generate and verify Groth16 proofs using Circom and SnarkJS.
+3. Build a Substrate FRAME verifier pallet.
+4. Connect proof verification result to a cross-chain workflow.
+5. Run local testnet simulation.
+6. Record performance results.
+7. Update the research paper with implementation and evaluation findings.
+
+## Academic Use
+
+This repository is part of academic research on privacy-preserving blockchain interoperability. It is intended for research, experimentation, and prototype development.
+
+## License
+
+License to be confirmed.
