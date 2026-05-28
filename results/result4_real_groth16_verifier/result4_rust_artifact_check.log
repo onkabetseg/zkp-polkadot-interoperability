@@ -1,0 +1,29 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.17s
+     Running `target/debug/rust-groth16-verifier`
+===== Result 4: Real Groth16 Verifier Preparation =====
+Proof file loaded: ../zkp-circuits/proof_commitment.json
+Public input file loaded: ../zkp-circuits/public_commitment.json
+Verification key file loaded: ../zkp-circuits/verification_key_commitment.json
+
+===== Proof JSON keys =====
+proof key: curve
+proof key: pi_a
+proof key: pi_b
+proof key: pi_c
+proof key: protocol
+
+===== Public inputs =====
+["19620391833206800292073497099357851348339828238212863168390691880932172496143"]
+
+===== Verification key JSON keys =====
+vk key: IC
+vk key: curve
+vk key: nPublic
+vk key: protocol
+vk key: vk_alpha_1
+vk key: vk_alphabeta_12
+vk key: vk_beta_2
+vk key: vk_delta_2
+vk key: vk_gamma_2
+
+Status: Groth16 proof artifacts are available for Rust/Substrate verifier conversion.

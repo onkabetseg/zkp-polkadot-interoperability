@@ -1,0 +1,33 @@
+node_modules
+.env
+
+# Hardhat files
+/cache
+/artifacts
+
+# TypeChain files
+/typechain
+/typechain-types
+
+# solidity-coverage files
+/coverage
+/coverage.json
+
+# Hardhat Ignition default folder for deployments against a local node
+ignition/deployments/chain-31337
+
+# Large local backups - do not push to GitHub
+substrate-backup_*.zip
+substrate-backup_*.tgz
+*.zip
+*.tgz
+*.tar.gz
+
+# ZKP generated heavy files
+*.ptau
+*.zkey
+*.wtns
+node_modules/
+target/
+artifacts/
+cache/

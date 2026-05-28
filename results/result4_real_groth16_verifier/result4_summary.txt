@@ -1,0 +1,27 @@
+Result 4: Real Groth16 Verifier Preparation for Substrate/FRAME
+
+This result extends the previous Substrate proof submission structure toward actual Groth16 verification.
+
+Completed:
+1. Created a Rust Groth16 verifier preparation module.
+2. Added Rust dependencies for arkworks Groth16 and BN254.
+3. Loaded the SnarkJS-generated proof, public input, and verification key files.
+4. Confirmed that the proof artifacts are available for Rust/Substrate conversion.
+5. Updated the Substrate-style verifier pallet to include a Groth16 verifier adapter.
+
+Research meaning:
+The implementation now has a clear separation between:
+- proof submission
+- public input submission
+- verification key handling
+- Groth16 verification logic
+- accepted/rejected verification result
+
+Current limitation:
+The Substrate pallet still uses an adapter placeholder. The next stage is to convert the SnarkJS proof and verification key into Rust arkworks BN254 structures and run full cryptographic verification in Rust.
+
+Next step:
+Implement JSON-to-arkworks conversion for:
+- proof_commitment.json
+- public_commitment.json
+- verification_key_commitment.json
