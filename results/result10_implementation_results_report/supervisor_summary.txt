@@ -1,0 +1,25 @@
+Implementation Progress Summary: Results 1 to 9
+
+The implementation has now reached an end-to-end prototype stage.
+
+Completed results:
+1. Environment setup and tool verification.
+2. Off-chain ZKP proof generation and public commitment verification.
+3. Substrate-style proof submission structure.
+4. Rust Groth16 verifier preparation.
+5. Full Rust Groth16 verification using arkworks BN254.
+6. Substrate Groth16 verifier adapter.
+7. Runtime-compatible proof structure and execution model.
+8. Simulated interoperability action.
+9. XCM-style message simulation.
+
+Key achievement:
+The SnarkJS-generated Groth16 proof was successfully verified in Rust using arkworks BN254.
+
+This is important because Substrate/Polkadot development is Rust-based. The work now shows a practical bridge from Circom/SnarkJS proof generation to Rust verification and then to Substrate/XCM-style interoperability control.
+
+Prototype flow:
+Private input → Circom circuit → SnarkJS proof → Rust Groth16 verification → Substrate verifier adapter → Runtime record → Interoperability decision → XCM-style simulation.
+
+Next step:
+Move from simulation toward a full FRAME pallet and prepare testing in a local Substrate/Polkadot environment.
