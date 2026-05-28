@@ -1,0 +1,10 @@
+Result 8 Flow: Simulated Interoperability Action
+
+1. A proof is generated off-chain.
+2. The Rust verifier checks the Groth16 proof.
+3. The verification result is submitted to the Substrate-style pallet.
+4. The pallet checks whether the result is accepted or rejected.
+5. If accepted, a simulated cross-chain action is allowed.
+6. If rejected, the cross-chain action is blocked.
+7. If source chain, target chain or payload hash is missing, the action is blocked.
+8. This prepares the system for future XCM-style interoperability flow.

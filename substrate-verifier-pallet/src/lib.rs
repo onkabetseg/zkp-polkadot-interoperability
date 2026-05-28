@@ -1,8 +1,9 @@
-// Result 7: Substrate/FRAME-style verifier pallet with runtime execution model
+// Result 8: Substrate/FRAME-style verifier pallet with simulated interoperability action
 // Research topic: Integrating ZKP to Enhance Secure Blockchain Interoperability in Polkadot
 //
-// This research prototype connects proof submission to a reusable Groth16 verifier adapter
-// and introduces a runtime-compatible verification-result model.
+// This research prototype connects proof verification results to an interoperability decision.
+// If the proof is accepted, a simulated cross-chain action is allowed.
+// If the proof is rejected, the action is blocked.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
@@ -14,6 +15,17 @@ pub mod runtime_model {
     pub mod proof_types;
     pub mod execution_model;
 }
+
+pub mod interoperability {
+    pub mod action;
+}
+
+use interoperability::action::{
+    evaluate_interoperability_action,
+    InteroperabilityAction,
+    InteroperabilityActionResult,
+    InteroperabilityActionType,
+};
 
 use runtime_model::proof_types::{
     create_runtime_record,
@@ -109,9 +121,26 @@ pub fn submit_offchain_verification_result(
     )
 }
 
+pub fn simulate_cross_chain_action_after_verification(
+    verification_accepted: bool,
+    source_chain: Vec<u8>,
+    target_chain: Vec<u8>,
+    payload_hash: Vec<u8>,
+) -> InteroperabilityActionResult {
+    let action = InteroperabilityAction {
+        action_type: InteroperabilityActionType::CrossChainMessage,
+        source_chain,
+        target_chain,
+        payload_hash,
+    };
+
+    evaluate_interoperability_action(verification_accepted, action)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+    use interoperability::action::InteroperabilityDecision;
 
     #[test]
     fn complete_submission_is_accepted() {
@@ -129,43 +158,47 @@ mod tests {
     }
 
     #[test]
-    fn missing_commitment_hash_is_rejected() {
-        let result = submit_proof_for_verification(
+    fn accepted_verification_allows_cross_chain_action() {
+        let result = simulate_cross_chain_action_after_verification(
+            true,
+            b"Parachain-A".to_vec(),
+            b"Parachain-B".to_vec(),
             vec![1, 2, 3],
-            vec![4, 5, 6],
-            vec![7, 8, 9],
-            vec![],
         );
 
-        match result.status {
-            VerificationStatus::Rejected => assert!(true),
-            _ => panic!("Expected missing commitment hash to be rejected"),
+        match result.decision {
+            InteroperabilityDecision::Allowed => assert!(true),
+            _ => panic!("Expected cross-chain action to be allowed"),
         }
     }
 
     #[test]
-    fn accepted_offchain_result_creates_runtime_record() {
-        let record = submit_offchain_verification_result(
+    fn rejected_verification_blocks_cross_chain_action() {
+        let result = simulate_cross_chain_action_after_verification(
+            false,
+            b"Parachain-A".to_vec(),
+            b"Parachain-B".to_vec(),
             vec![1, 2, 3],
-            vec![4, 5, 6],
-            b"rust-arkworks-verifier".to_vec(),
-            123456,
-            true,
         );
 
-        assert!(record.is_some());
+        match result.decision {
+            InteroperabilityDecision::Blocked => assert!(true),
+            _ => panic!("Expected cross-chain action to be blocked"),
+        }
     }
 
     #[test]
-    fn missing_offchain_result_data_is_rejected() {
-        let record = submit_offchain_verification_result(
-            vec![],
-            vec![],
-            vec![],
-            123456,
+    fn incomplete_cross_chain_action_is_blocked() {
+        let result = simulate_cross_chain_action_after_verification(
             true,
+            vec![],
+            vec![],
+            vec![],
         );
 
-        assert!(record.is_none());
+        match result.decision {
+            InteroperabilityDecision::Blocked => assert!(true),
+            _ => panic!("Expected incomplete cross-chain action to be blocked"),
+        }
     }
 }

@@ -1,0 +1,30 @@
+Result 8: Simulated Interoperability Action
+
+This result connects ZKP verification to an interoperability decision. The aim is to show that the system does not only verify a proof, but can also use the verification result to allow or block a cross-chain action.
+
+Completed:
+1. Created a simulated interoperability action module.
+2. Defined supported action types:
+   - CrossChainMessage
+   - AssetTransfer
+   - StateAccess
+3. Defined interoperability decisions:
+   - Allowed
+   - Blocked
+4. Added action validation using:
+   - source chain
+   - target chain
+   - payload hash
+5. Connected verification outcome to interoperability decision.
+6. Updated the Substrate-style pallet to simulate a cross-chain action after verification.
+
+Logic demonstrated:
+- If ZKP verification is accepted, the interoperability action is allowed.
+- If ZKP verification is rejected, the interoperability action is blocked.
+- If action data is incomplete, the interoperability action is blocked.
+
+Research meaning:
+This result links the cryptographic verification layer to blockchain interoperability control. In a future Polkadot/XCM implementation, this logic can be adapted so that a verified proof authorizes a cross-chain message or asset movement, while an invalid proof prevents the action. This directly supports the research objective of enhancing secure blockchain interoperability using Zero-Knowledge Proofs.
+
+Current limitation:
+The interoperability action is simulated. It does not yet send a real XCM message. The next step is to create an XCM-style message structure and map accepted verification results to a simulated XCM dispatch flow.
