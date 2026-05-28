@@ -1,0 +1,36 @@
+Result 9: XCM-Style Message Simulation
+
+This result extends the interoperability decision from Result 8 by preparing a simulated Polkadot/XCM-style message dispatch flow.
+
+Completed:
+1. Created an XCM-style message simulation module.
+2. Defined XCM-style message types:
+   - TransferAsset
+   - SendInstruction
+   - RequestStateAccess
+3. Defined dispatch decisions:
+   - DispatchAllowed
+   - DispatchBlocked
+4. Created an XCM-style message structure containing:
+   - source parachain
+   - destination parachain
+   - payload hash
+   - proof hash
+   - public commitment
+5. Added message preparation logic.
+6. Added dispatch decision logic.
+7. Updated the Substrate-style pallet to simulate XCM dispatch after verification.
+
+Logic demonstrated:
+- If ZKP verification is accepted and the message is complete, XCM-style dispatch is allowed.
+- If ZKP verification is rejected, XCM-style dispatch is blocked.
+- If required message data is missing, XCM-style dispatch is blocked.
+
+Research meaning:
+This result links ZKP verification to a Polkadot/XCM-style interoperability flow. It shows how a verified proof can support a cross-chain message decision. In a future full implementation, this logic can be extended to actual XCM dispatch where accepted ZKP verification authorizes cross-chain instructions, asset transfers, or state access.
+
+Current limitation:
+This is a simulation only. It does not yet send real XCM messages on a live or local parachain network.
+
+Next step:
+Create an implementation results report that summarises Results 1 to 9 and explains how the prototype supports secure blockchain interoperability using ZKPs.

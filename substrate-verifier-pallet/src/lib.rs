@@ -1,9 +1,10 @@
-// Result 8: Substrate/FRAME-style verifier pallet with simulated interoperability action
+// Result 9: Substrate/FRAME-style verifier pallet with XCM-style message simulation
 // Research topic: Integrating ZKP to Enhance Secure Blockchain Interoperability in Polkadot
 //
-// This research prototype connects proof verification results to an interoperability decision.
-// If the proof is accepted, a simulated cross-chain action is allowed.
-// If the proof is rejected, the action is blocked.
+// This research prototype connects proof verification results to:
+// 1. runtime verification records,
+// 2. simulated interoperability decisions,
+// 3. XCM-style message dispatch decisions.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
@@ -18,6 +19,10 @@ pub mod runtime_model {
 
 pub mod interoperability {
     pub mod action;
+}
+
+pub mod xcm_simulation {
+    pub mod message;
 }
 
 use interoperability::action::{
@@ -37,6 +42,13 @@ use verifier::groth16_adapter::{
     verify_groth16_proof,
     Groth16ProofData,
     Groth16VerificationOutcome,
+};
+
+use xcm_simulation::message::{
+    dispatch_xcm_style_message,
+    prepare_xcm_style_message,
+    XcmDispatchResult,
+    XcmMessageType,
 };
 
 pub struct ZkpProofSubmission {
@@ -137,10 +149,31 @@ pub fn simulate_cross_chain_action_after_verification(
     evaluate_interoperability_action(verification_accepted, action)
 }
 
+pub fn simulate_xcm_dispatch_after_verification(
+    verification_accepted: bool,
+    source_parachain: Vec<u8>,
+    destination_parachain: Vec<u8>,
+    payload_hash: Vec<u8>,
+    proof_hash: Vec<u8>,
+    public_commitment: Vec<u8>,
+) -> XcmDispatchResult {
+    let message = prepare_xcm_style_message(
+        XcmMessageType::SendInstruction,
+        source_parachain,
+        destination_parachain,
+        payload_hash,
+        proof_hash,
+        public_commitment,
+    );
+
+    dispatch_xcm_style_message(verification_accepted, message)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use interoperability::action::InteroperabilityDecision;
+    use xcm_simulation::message::XcmDispatchDecision;
 
     #[test]
     fn complete_submission_is_accepted() {
@@ -188,17 +221,53 @@ mod tests {
     }
 
     #[test]
-    fn incomplete_cross_chain_action_is_blocked() {
-        let result = simulate_cross_chain_action_after_verification(
+    fn accepted_verification_allows_xcm_dispatch() {
+        let result = simulate_xcm_dispatch_after_verification(
             true,
+            b"Parachain-A".to_vec(),
+            b"Parachain-B".to_vec(),
+            vec![1, 2, 3],
+            vec![4, 5, 6],
+            vec![7, 8, 9],
+        );
+
+        match result.decision {
+            XcmDispatchDecision::DispatchAllowed => assert!(true),
+            _ => panic!("Expected XCM-style dispatch to be allowed"),
+        }
+    }
+
+    #[test]
+    fn rejected_verification_blocks_xcm_dispatch() {
+        let result = simulate_xcm_dispatch_after_verification(
+            false,
+            b"Parachain-A".to_vec(),
+            b"Parachain-B".to_vec(),
+            vec![1, 2, 3],
+            vec![4, 5, 6],
+            vec![7, 8, 9],
+        );
+
+        match result.decision {
+            XcmDispatchDecision::DispatchBlocked => assert!(true),
+            _ => panic!("Expected XCM-style dispatch to be blocked"),
+        }
+    }
+
+    #[test]
+    fn incomplete_xcm_data_blocks_dispatch() {
+        let result = simulate_xcm_dispatch_after_verification(
+            true,
+            vec![],
+            vec![],
             vec![],
             vec![],
             vec![],
         );
 
         match result.decision {
-            InteroperabilityDecision::Blocked => assert!(true),
-            _ => panic!("Expected incomplete cross-chain action to be blocked"),
+            XcmDispatchDecision::DispatchBlocked => assert!(true),
+            _ => panic!("Expected incomplete XCM-style dispatch to be blocked"),
         }
     }
 }

@@ -1,0 +1,11 @@
+Result 9 Flow: XCM-Style Message Simulation
+
+1. Private inputs are used to generate a ZKP proof.
+2. The Rust Groth16 verifier checks the proof.
+3. The verification result is submitted to the Substrate-style pallet.
+4. If accepted, an XCM-style message is prepared.
+5. The message includes source parachain, destination parachain, payload hash, proof hash and public commitment.
+6. If all message fields are present and proof verification is accepted, dispatch is allowed.
+7. If proof verification is rejected, dispatch is blocked.
+8. If message data is incomplete, dispatch is blocked.
+9. This prepares the system for future real XCM integration.
