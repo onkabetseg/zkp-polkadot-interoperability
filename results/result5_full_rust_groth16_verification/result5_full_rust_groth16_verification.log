@@ -1,0 +1,12 @@
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.12s
+     Running `target/debug/rust-groth16-verifier`
+===== Result 5: Full Rust Groth16 Verification =====
+Proof loaded: ../zkp-circuits/proof_commitment.json
+Public inputs loaded: ../zkp-circuits/public_commitment.json
+Verification key loaded: ../zkp-circuits/verification_key_commitment.json
+
+Public input:
+["19620391833206800292073497099357851348339828238212863168390691880932172496143"]
+
+Trying verification using normal Fq2 order...
+SUCCESS: Groth16 proof verified in Rust using arkworks BN254.
