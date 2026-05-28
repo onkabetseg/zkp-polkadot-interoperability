@@ -1,0 +1,12 @@
+Result 6 Files
+
+1. substrate-verifier-pallet/src/lib.rs
+   - Substrate-style proof submission logic
+   - Calls the reusable Groth16 verifier adapter
+
+2. substrate-verifier-pallet/src/verifier/groth16_adapter.rs
+   - Reusable Groth16 verifier adapter
+   - Defines proof data and verification outcomes
+
+3. results/result6_substrate_verifier_adapter/result6_summary.txt
+   - Result 6 implementation summary

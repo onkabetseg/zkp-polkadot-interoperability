@@ -1,0 +1,26 @@
+Result 6: Substrate Verifier Adapter Integration
+
+This result moves the implementation from standalone Rust Groth16 verification toward a Substrate/FRAME-ready structure.
+
+Completed:
+1. Created a reusable Groth16 verifier adapter module.
+2. Separated proof verification logic from pallet submission logic.
+3. Updated the Substrate-style pallet to call the Groth16 adapter.
+4. Added structured proof data containing:
+   - proof
+   - public inputs
+   - verification key
+5. Added verification outcomes:
+   - Verified
+   - Failed
+   - InvalidInput
+6. Added pallet-level acceptance and rejection handling.
+
+Research meaning:
+Result 6 creates a cleaner bridge between the successful Rust Groth16 verification from Result 5 and the future Substrate/FRAME pallet. Instead of keeping verification logic directly inside the pallet, the verifier is separated into an adapter module. This improves maintainability and prepares the design for runtime-compatible integration.
+
+Current limitation:
+The adapter currently uses a placeholder verification response. The actual full arkworks Groth16 verification from Result 5 must still be converted into a runtime-compatible form before being used directly inside a real Substrate pallet.
+
+Next step:
+Prepare runtime-compatible proof structures and decide whether full verification will run directly inside the pallet or through an off-chain worker / pre-verification model.
