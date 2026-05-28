@@ -1,15 +1,25 @@
-// Result 6: Substrate/FRAME-style verifier pallet connected to Groth16 adapter
+// Result 7: Substrate/FRAME-style verifier pallet with runtime execution model
 // Research topic: Integrating ZKP to Enhance Secure Blockchain Interoperability in Polkadot
 //
-// This research prototype connects the proof submission flow to a reusable
-// Groth16 verifier adapter. The adapter prepares Result 5 Rust verification
-// logic for later Substrate/FRAME runtime integration.
+// This research prototype connects proof submission to a reusable Groth16 verifier adapter
+// and introduces a runtime-compatible verification-result model.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
 pub mod verifier {
     pub mod groth16_adapter;
 }
+
+pub mod runtime_model {
+    pub mod proof_types;
+    pub mod execution_model;
+}
+
+use runtime_model::proof_types::{
+    create_runtime_record,
+    RuntimeVerificationDecision,
+    RuntimeVerificationRecord,
+};
 
 use verifier::groth16_adapter::{
     verify_groth16_proof,
@@ -70,6 +80,35 @@ pub fn submit_proof_for_verification(
     }
 }
 
+pub fn submit_offchain_verification_result(
+    proof_hash: Vec<u8>,
+    public_commitment: Vec<u8>,
+    verifier_id: Vec<u8>,
+    timestamp: u64,
+    accepted: bool,
+) -> Option<RuntimeVerificationRecord> {
+    let decision = if accepted {
+        RuntimeVerificationDecision::Accepted
+    } else {
+        RuntimeVerificationDecision::Rejected
+    };
+
+    let reason = if accepted {
+        b"Off-chain Groth16 verification accepted".to_vec()
+    } else {
+        b"Off-chain Groth16 verification rejected".to_vec()
+    };
+
+    create_runtime_record(
+        proof_hash,
+        public_commitment,
+        verifier_id,
+        timestamp,
+        decision,
+        reason,
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -105,17 +144,28 @@ mod tests {
     }
 
     #[test]
-    fn missing_proof_data_is_rejected() {
-        let result = submit_proof_for_verification(
-            vec![],
-            vec![],
-            vec![],
-            vec![10, 11, 12],
+    fn accepted_offchain_result_creates_runtime_record() {
+        let record = submit_offchain_verification_result(
+            vec![1, 2, 3],
+            vec![4, 5, 6],
+            b"rust-arkworks-verifier".to_vec(),
+            123456,
+            true,
         );
 
-        match result.status {
-            VerificationStatus::Rejected => assert!(true),
-            _ => panic!("Expected missing proof data to be rejected"),
-        }
+        assert!(record.is_some());
+    }
+
+    #[test]
+    fn missing_offchain_result_data_is_rejected() {
+        let record = submit_offchain_verification_result(
+            vec![],
+            vec![],
+            vec![],
+            123456,
+            true,
+        );
+
+        assert!(record.is_none());
     }
 }

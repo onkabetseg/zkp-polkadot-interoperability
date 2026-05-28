@@ -1,0 +1,29 @@
+Result 7: Runtime-Compatible Proof Structure and Execution Model
+
+This result prepares the implementation for practical Substrate/Polkadot integration by defining how proof verification results can be represented in a runtime-compatible structure.
+
+Selected execution model:
+Off-chain Groth16 verification with on-chain verification-result submission.
+
+Completed:
+1. Created runtime-compatible proof metadata structures.
+2. Added a verification record containing:
+   - proof hash
+   - public commitment
+   - verifier identity
+   - verification timestamp
+   - verification decision
+   - reason/status message
+3. Added an execution model decision file.
+4. Selected off-chain verification with on-chain result submission as the prototype model.
+5. Updated the Substrate-style pallet to accept an off-chain verification result.
+6. Added logic to create an on-chain-style verification record after proof verification.
+
+Reason for selected model:
+Full Groth16 verification inside a Substrate runtime may be computationally expensive and complex for an early prototype. Since Result 5 already proved that Groth16 verification works in Rust using arkworks BN254, the practical next step is to perform verification off-chain and submit the accepted/rejected result to the runtime. This approach still supports auditability and future interoperability actions while reducing runtime complexity.
+
+Research meaning:
+This result moves the system closer to a practical Polkadot design. It separates heavy cryptographic verification from runtime state recording. The runtime can store or emit proof verification results, while the Rust verifier performs the actual Groth16 check.
+
+Next step:
+Connect the runtime verification record to a simulated interoperability action, such as allowing or rejecting a cross-chain message based on the verification decision.

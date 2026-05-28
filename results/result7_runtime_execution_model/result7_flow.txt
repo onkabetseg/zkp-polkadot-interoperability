@@ -1,0 +1,11 @@
+Result 7 Execution Flow
+
+1. User submits private inputs off-chain.
+2. Circom circuit generates witness.
+3. SnarkJS generates Groth16 proof and public commitment.
+4. Rust arkworks verifier validates the proof off-chain.
+5. The proof hash, public commitment and verifier identity are prepared.
+6. The Substrate-style pallet receives the verification result.
+7. The runtime creates a verification record.
+8. If accepted, the result can support a future interoperability/XCM action.
+9. If rejected, the interoperability action is blocked.
